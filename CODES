@@ -1,0 +1,362 @@
+PROGRAM-1
+FIND-S
+import pandas as pd
+import itertools
+df=pd.read_csv('ENJOYSPORT.csv',header=None)
+df.drop(0,axis=0,inplace=True)
+df.head()
+row_len,col_len=df.shape
+a=[]
+flag=0
+for index,row in df.iterrows():
+    if(row[col_len-1]=='1' or row[col_len-1]==1):
+        if(flag==0):
+            flag=1
+            a.extend(row[0:col_len-1])
+        for i in range(col_len-1):
+            if(row[i]==a[i]):
+                a[i]==row[i]
+            else:
+                a[i]='?'
+print(a)
+      new_list=list()
+for i in range(col_len-1):
+    version_space=set()
+    for index,row in df.iterrows():
+        version_space.add(row[i])
+        version_space.add('$')
+        version_space.add('?')
+    new_list.append(list(version_space))
+new_list
+version_space=list(itertools.product(*new_list))
+print('total no element in versionSpace',len(version_space))
+version_space[:10]
+def apply(key,df):
+    for index,row in df.iterrows():
+        flag=0
+        for i in range(col_len-1):
+            if(key[i]=='?' or key[i]==row[i]):
+                flag+=1
+            else:
+                continue
+        if(flag==col_len-1 and row[col_len-1]=='1') or (flag!=col_len-1 and row[col_len-1]=='0'):
+            continue
+        else:
+            return 1
+    return 0
+for i in version_space:
+    p=apply(i,df)
+    if(p==0):
+        print(i)
+
+
+
+
+
+
+
+PROGRAM-2
+
+import numpy as np 
+import pandas as pd
+
+data = pd.read_csv(r'ENJOYSPORT.csv')
+concepts = np.array(data.iloc[:,0:-1])
+print("\nInstances are:\n",concepts)
+target = np.array(data.iloc[:,-1],dtype=np.int64)
+print("\nTarget Values are: ",target)
+
+def learn(concepts, target): 
+    specific_h = concepts[0].copy()
+    print("\nInitialization of specific_h and genearal_h")
+    print("\nSpecific Boundary: ", specific_h)
+    general_h = [["?" for i in range(len(specific_h))] for i in range(len(specific_h))]
+    print("\nGeneric Boundary: ",general_h)  
+
+    for i, h in enumerate(concepts):
+        print("\nInstance", i+1 , "is ", h)
+        if target[i] == 1:
+            print("Instance is Positive ")
+            for x in range(len(specific_h)): 
+                if h[x]!= specific_h[x]:                    
+                    specific_h[x] ='?'                     
+                    general_h[x][x] ='?'
+                   
+        if target[i] == 0:            
+            print("Instance is Negative ")
+            for x in range(len(specific_h)): 
+                if h[x]!= specific_h[x]:                    
+                    general_h[x][x] = specific_h[x]                
+                else:                    
+                    general_h[x][x] = '?'        
+        
+        print("Specific Bundary after ", i+1, "Instance is ", specific_h)         
+        print("Generic Boundary after ", i+1, "Instance is ", general_h)
+        print("\n")
+learn(concepts, target)
+
+
+PROGRAM-3
+Import pandas as pd
+
+df=pd.read_excel('dataset_program_3.xlsx')
+df.head()
+
+a=list(df.columns)
+for i in a:
+print(len(df[i].unique())<3)
+
+df.drop('origin',axis=1,inplace=True)
+df.head()
+
+df.shape
+
+df.isnull().sum()
+a=df['displacement'].mean()
+
+b=df['horsepower'].mean()
+
+values = {"displacement": a, "horsepower":b }
+
+df.fillna(value=values,inplace=True)
+df.isnull().sum()
+
+data=df.duplicated(keep=False)
+data
+
+data=df[df.duplicated(keep=False)]
+data.sort_values(by='mpg')
+
+data = pd.DataFrame(df)
+display(data.drop_duplicates())
+
+PROGRAM-4
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix
+from matplotlib import pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn import tree
+df=pd.read_csv("Iris.csv")
+df.head()
+df.drop('Id',axis=1,inplace=True)
+df.head()
+
+le = LabelEncoder()
+df['Species']= le.fit_transform(df['Species'])
+df['Species'].unique()
+
+X=df.iloc[:,:4]
+y=df.iloc[:,4:]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=123)
+   clf=DecisionTreeClassifier(criterion='entropy', max_leaf_nodes=3)
+clf.fit(X_train,y_train)
+y_pred=clf.predict(X_test)
+     print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+     confusion_matrix(y_test, y_pred)
+
+fn=['SepalLengthCm'	,'SepalWidthCm'	,'PetalLengthCm',	'PetalWidthCm']
+cn=['Iris-setosa','	Iris-versicolor','Iris-virginica']
+     fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (2,2), dpi=400)
+tree.plot_tree(clf,
+               feature_names = fn,
+               class_names=cn,
+               filled = True);
+
+species_check = clf.predict([[4.7,	3.2,	1.3,	0.2]])[0]
+species_check
+
+
+PROGRAM-5
+RANDOM FOREST
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from matplotlib import pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn import tree
+df=pd.read_csv("Iris.csv") 
+df.head()
+df.drop('Id',axis=1,inplace=True)
+df.head()
+le = LabelEncoder()
+df['Species']= le.fit_transform(df['Species'])
+df['Species'].unique()
+X=df.iloc[:,:4]
+y=df.iloc[:,4:]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=123)
+clf=RandomForestClassifier(n_estimators=3)
+clf.fit(X_train,y_train.values.ravel())
+y_pred=clf.predict(X_test)
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+confusion_matrix(y_test, y_pred)
+fn=['SepalLengthCm'	,'SepalWidthCm'	,'PetalLengthCm',	'PetalWidthCm']
+cn=['Iris-setosa','	Iris-versicolor','Iris-virginica']
+fig, axes = plt.subplots(nrows = 1,ncols = 1,figsize = (4,4), dpi=800)
+tree.plot_tree(clf.estimators_[0],
+               feature_names = fn, 
+               class_names=cn,
+               filled = True)
+species_check = clf.predict([[4.7,3.2,1.3,0.2]])[0]
+species_check
+
+PROGRAM-6
+
+import pandas as pd
+dataset = pd.read_csv('6 naivebasedataset.csv',header=None)
+Y=dataset[8]
+X=dataset.drop([8], axis=1)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=1)
+print('X_trian = ',len(X_train))
+print('X_test = ',len(X_test))
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+gnb.fit(X_train, y_train)
+y_pred = gnb.predict(X_test)
+from sklearn import metrics
+print("Gaussian Naive Bayes model accuracy(in %):", metrics.accuracy_score(y_test, y_pred)*100)
+
+PROGRAM-7
+import numpy as np, pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.datasets import load_files
+import seaborn as sns
+test=load_files(r'C:\Users\Lishakka\OneDrive\Desktop\20news-bydate-test',encoding='latin1')
+train=load_files(r'C:\Users\Lishakka\OneDrive\Desktop\20news-bydate-train',encoding='latin1')
+print("Number of unique classes {}".format(len(set(train.target))))
+print("Number of training samples {} ".format(len(train.data)))
+print("Number of test samples {}".format(len(test.data)))
+train.data[1]
+model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+model.fit(train.data, train.target)
+predicted_categories = model.predict(test.data)
+a=np.array(test.target_names)[predicted_categories]
+print(a)
+mat=confusion_matrix(test.target, predicted_categories)
+sns.heatmap(mat,annot=True)
+print(classification_report(test.target, predicted_categories,target_names=set(a)))
+
+Program-8
+!pip install pgmpy
+!pip install networkx
+import pandas as pd
+import numpy as np
+from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.models import BayesianModel
+from pgmpy.inference import VariableElimination
+import networkx as nx
+import matplotlib.pyplot as plt
+df=pd.read_csv("8-dataset.csv")
+df.head()
+print(df.info())
+print(pd.unique(df['age']))
+model= BayesianModel([('age','heartdisease'),('gender','heartdisease'),('exang','heartdisease'),('cp','heartdisease'),('heartdisease','restecg')])
+model.fit(df,estimator=MaximumLikelihoodEstimator)
+print('\n Inferencing with Bayesian Network:')
+HeartDisease_infer = VariableElimination(model)
+print('\n 1. Probability of HeartDisease given evidence= cp')
+q1=HeartDisease_infer.query(variables=['heartdisease'],evidence={'gender':1})
+print(q1)
+print('\n 1. Probability of HeartDisease given evidence= restecg')
+q2=HeartDisease_infer.query(variables=['heartdisease'],evidence={'restecg':1})
+print(q2)
+graph = nx.DiGraph(model.edges())
+nx.draw_networkx(graph,with_labels=True)
+#plot
+plt.show()
+
+Program-9
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt 
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from sklearn.mixture import GaussianMixture
+from sklearn.inspection import DecisionBoundaryDisplay
+df = pd.read_csv("Iris.csv")
+df.head()
+df.drop('Id',axis=1,inplace=True)
+df.head()
+le = LabelEncoder()
+df['Species']= le.fit_transform(df['Species'])
+df['Species'].unique()
+X=df.iloc[:,:4]
+y=df.iloc[:,4:]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=123)
+wcss = [] #within cluster sum square
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters = i)
+    kmeans.fit(X)
+wcss.append(kmeans.inertia_)
+plt.plot(range(1, 11), wcss)
+plt.title('The elbow method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+x=df.iloc[:,:4]
+gmm=GaussianMixture(n_components=3)
+gmm.fit(X_train)
+y_prediction=gmm.predict(X_test)
+class_names=["Iris-setosa","Iris-virginica","Iris-versicolor"]
+print(classification_report(y_test, y_prediction ,target_names=class_names))
+x=df.iloc[:,:2]
+gmm=GaussianMixture(n_components=3)
+gmm.fit(x)
+disp=DecisionBoundaryDisplay.from_estimator(gmm,
+                                        x,
+                                        response_method="predict",
+                                        alpha=0.5)
+disp.ax_.scatter(df.iloc[:,:1], df.iloc[:,1:2], c=df['Species'].to_numpy(), edgecolor="k")
+plt.plot()
+
+
+Program-10
+import matplotlib.pyplot as plt
+from sklearn.inspection import DecisionBoundaryDisplay
+from sklearn.svm import SVC
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+import pandas as pd
+df = pd.read_csv(r"Iris.csv")
+df.drop('Id',axis=1,inplace=True)
+df.head()
+df.info()
+le = LabelEncoder()
+df['Species']= le.fit_transform(df['Species'])
+df['Species'].unique()
+X=df.iloc[:,:4]
+y=df.iloc[:,4:]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=123)
+svm = SVC(kernel="rbf", gamma=0.5, C=1.0)
+svm.fit(X_train, y_train)
+y_prediction=svm.predict(X_test)
+class_names=["Iris-setosa","Iris-virginica","Iris-versicolor"]
+print(classification_report(y_test, y_prediction ,target_names=class_names))
+x=df.iloc[:,:2]
+svm2 = SVC(kernel="rbf", gamma=0.5, C=1.0)
+svm2.fit(x, y)
+DecisionBoundaryDisplay.from_estimator(
+		svm2,
+		x,
+		response_method="predict",
+		cmap=plt.cm.Spectral,
+		alpha=0.8,
+	)
